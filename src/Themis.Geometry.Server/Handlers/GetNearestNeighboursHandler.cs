@@ -11,6 +11,7 @@ namespace Themis.Geometry.Server.Handlers
     public class GetNearestNeighboursHandler : IRequestHandler<GetNearestNeighboursCommand, IEnumerable<IPoint>>
     {
         readonly IPointProviderService pointProviderService;
+
         public GetNearestNeighboursHandler(IPointProviderService pointService)
         {
             this.pointProviderService = pointService;

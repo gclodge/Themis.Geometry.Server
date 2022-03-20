@@ -39,7 +39,7 @@ namespace Themis.Geometry.Server.Controllers
         {
             var command = new GetNearestNeighboursCommand(poi, count, ref indexLock);
             var result = this.mediator.Send(command).Result;
-            Log.Information("PointsController: Sent GetNearestNeighbour request for POI: {poi}", poi.Position.ToArray());
+            Log.Information("PointsController: Sent GetNearestNeighbours request for POI: {poi}", poi.Position.ToArray());
             return result;
         }
     }
