@@ -6,6 +6,7 @@
         double Y { get; }
         double Z { get; }
 
+        IEnumerable<double> Position { get; }
         IDictionary<string, string> Attributes { get; }
     }
 }

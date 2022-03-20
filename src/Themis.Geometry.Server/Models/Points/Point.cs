@@ -16,6 +16,40 @@ namespace Themis.Geometry.Server.Models.Points
         [JsonProperty("attributes")]
         public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
 
+        #region Fluent Interface
+        public static Point FromPoint(IPoint other)
+        {
+            return new Point()
+            {
+                Position = other.Position,
+                Attributes = other.Attributes
+            };
+        }
+
+        public Point WithPosition(IPoint other)
+        {
+            return WithPosition(other.Position);
+        }
+
+        public Point WithPosition(IEnumerable<double> pos)
+        {
+            this.Position = pos.ToList();
+            return this;
+        }
+
+        public Point WithAttributes(IPoint other)
+        {
+            return WithAttributes(other.Attributes);
+        }
+
+        public Point WithAttributes(IDictionary<string, string> atts)
+        {
+            this.Attributes = atts;
+            return this;
+        }
+        #endregion
+
+        #region IEquatable Members
         public override bool Equals(object? obj)
         {
             return Equals(obj as Point);
@@ -32,5 +66,6 @@ namespace Themis.Geometry.Server.Models.Points
         {
             return HashCode.Combine(Position, Attributes);
         }
+        #endregion
     }
 }
