@@ -1,4 +1,6 @@
 using Themis.Geometry.Server;
+using Themis.Geometry.Server.Services;
+using Themis.Geometry.Server.Services.Interfaces;
 
 using MediatR;
 using Serilog;
@@ -15,8 +17,10 @@ try
            .WriteTo.Console()
            .ReadFrom.Configuration(ctx.Configuration));
 
-    // Add services to the container.
+    //< Add services to the DI container
     builder.Services.AddMediatR(System.Reflection.Assembly.GetExecutingAssembly());
+    //< TODO :: Configure IPointProviderService w/ IOptions
+    builder.Services.AddSingleton<IPointProviderService, PointProviderService>();
 
     builder.Services.AddSwaggerGen();
     builder.Services.AddControllers();
@@ -26,8 +30,6 @@ try
     builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddEnvironmentVariables(Constants.ENV_VAR_PREFIX);
 
-    //< TODO :: Register IPointProviderService singleton
-    //< TODO :: Configure IPointProviderService w/ IOptions
     //< TODO :: Actually implement PointProviderService..
     //< TODO :: Tests, you animal
 
