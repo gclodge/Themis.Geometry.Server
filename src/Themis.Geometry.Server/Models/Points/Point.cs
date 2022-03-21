@@ -6,8 +6,11 @@ namespace Themis.Geometry.Server.Models.Points
 {
     public class Point : IPoint, IEquatable<Point>
     {
-        public double X => Position.Count() > 0 ? Position.ElementAt(0) : double.NaN;
-        public double Y => Position.Count() > 1 ? Position.ElementAt(1) : double.NaN;
+        public const int MinimumDimensionality = 2;
+        public const int MaximumDimensionality = 1337; //< comedy.init();
+
+        public double X => Position.ElementAt(0);
+        public double Y => Position.ElementAt(1);
         public double Z => Position.Count() > 2 ? Position.ElementAt(2) : double.NaN;
 
         [JsonProperty("position")]

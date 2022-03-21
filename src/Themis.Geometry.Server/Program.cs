@@ -19,7 +19,10 @@ try
 
     //< Add services to the DI container
     builder.Services.AddMediatR(System.Reflection.Assembly.GetExecutingAssembly());
-    //< TODO :: Configure IPointProviderService w/ IOptions
+    //< Configure PointProviderService & add it as a Singleton
+    builder.Services.AddOptions<PointProviderServiceConfig>()
+            .Bind(builder.Configuration.GetSection(PointProviderServiceConfig.Name))
+            .ValidateDataAnnotations();
     builder.Services.AddSingleton<IPointProviderService, PointProviderService>();
 
     builder.Services.AddSwaggerGen();
