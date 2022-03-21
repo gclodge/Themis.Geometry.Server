@@ -19,10 +19,11 @@ try
 
     //< Add services to the DI container
     builder.Services.AddMediatR(System.Reflection.Assembly.GetExecutingAssembly());
-    //< Configure PointProviderService & add it as a Singleton
+    //< Add & Configure Singletons
+    builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
     builder.Services.AddOptions<PointProviderServiceConfig>()
-            .Bind(builder.Configuration.GetSection(PointProviderServiceConfig.Name))
-            .ValidateDataAnnotations();
+                    .Bind(builder.Configuration.GetSection(PointProviderServiceConfig.Name))
+                    .ValidateDataAnnotations();
     builder.Services.AddSingleton<IPointProviderService, PointProviderService>();
 
     builder.Services.AddSwaggerGen();
@@ -34,7 +35,7 @@ try
     builder.Configuration.AddEnvironmentVariables(Constants.ENV_VAR_PREFIX);
 
     //< TODO :: Actually implement PointProviderService..
-    //< TODO :: Tests, you animal
+    //< TODO :: (moar) tests, you animal
 
     var app = builder.Build();
 

@@ -2,6 +2,7 @@
 using Themis.Geometry.Index.KdTree.TypeMath;
 using Themis.Geometry.Index.KdTree.Interfaces;
 
+using Themis.Geometry.Server.Models.Points;
 using Themis.Geometry.Server.Models.Points.Interfaces;
 using Themis.Geometry.Server.Services.Interfaces;
 
@@ -15,18 +16,19 @@ namespace Themis.Geometry.Server.Services
     {
         public static readonly object IndexLock = new object();
 
-        private readonly PointProviderServiceConfig? config;
-        private IKdTree<double, IPoint> index;
+        private readonly PointProviderServiceConfig config;
 
-        public PointProviderService(IOptions<PointProviderServiceConfig> cfg)
+        private IKdTree<double, IPoint> index;
+        private readonly IFileSystemService fss;
+
+        public PointProviderService(IFileSystemService fileSystemService, IOptions<PointProviderServiceConfig> cfg)
         {
             config = ParseConfiguration(cfg);
-
             index = new KdTree<double, IPoint>(config.DIMENSIONS, new DoubleMath());
-
+            fss = fileSystemService;
         }
 
-        PointProviderServiceConfig ParseConfiguration(IOptions<PointProviderServiceConfig> opt)
+        static PointProviderServiceConfig ParseConfiguration(IOptions<PointProviderServiceConfig> opt)
         {
             PointProviderServiceConfig cfg;
             try
@@ -41,19 +43,39 @@ namespace Themis.Geometry.Server.Services
             }
         }
 
+        public IKdTree<double, IPoint> LoadExistingData()
+        {
+            if (config.POINT_DATA_FILE == null) return index;
+
+            return fss.FileExists(config.POINT_DATA_FILE) ? LoadFromFile(config.POINT_DATA_FILE) : index;
+        }
+
+        IKdTree<double, IPoint> LoadFromFile(string pointFile)
+        {
+            foreach (var point in fss.LoadFromFile(pointFile)) index.Add(point.Position, point);
+
+            return index;
+        }
+
         public IEnumerable<IPoint> GetAllWithin(IPoint point, double searchDistance)
         {
-            throw new NotImplementedException();
+            foreach (var node in index.RadialSearch(point.Position, searchDistance))
+            {
+                if (node.Value != null) yield return node.Value;
+            }
         }
 
         public IPoint GetNearest(IPoint poi)
         {
-            throw new NotImplementedException();
+            return GetNearest(poi, 1).SingleOrDefault() ?? new Point();
         }
 
         public IEnumerable<IPoint> GetNearest(IPoint poi, int count)
         {
-            throw new NotImplementedException();
+            foreach (var node in index.GetNearestNeighbours(poi.Position, count))
+            {
+                if (node.Value != null) yield return node.Value;
+            }
         }
     }
 }
