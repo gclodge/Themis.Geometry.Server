@@ -9,20 +9,26 @@ namespace Themis.Geometry.Server.Builders
         private PointCollection points = new();
 
         #region IPointCollectionBuilder members
-        public IPointCollectionBuilder AddFromJson(string json)
+        public IPointCollectionBuilder AddPoint(IPoint point)
         {
-            this.points.AddFromJson(json);
+            this.points.Add(point);
             return this;
         }
 
-        public IPointCollectionBuilder WithPoints(IPointCollection pcoll)
+        public IPointCollectionBuilder AddPoints(IPointCollection pcoll)
         {
-            return WithPoints(pcoll.Points);
+            return AddPoints(pcoll.Points);
         }
 
-        public IPointCollectionBuilder WithPoints(IEnumerable<IPoint> points)
+        public IPointCollectionBuilder AddPoints(IEnumerable<IPoint> points)
         {
             this.points.Add(points);
+            return this;
+        }
+
+        public IPointCollectionBuilder AddPointsFromJson(string json)
+        {
+            this.points.AddFromJson(json);
             return this;
         }
         #endregion

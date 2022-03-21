@@ -2,6 +2,7 @@
 using Themis.Geometry.Index.KdTree.TypeMath;
 using Themis.Geometry.Index.KdTree.Interfaces;
 
+using Themis.Geometry.Server.Builders;
 using Themis.Geometry.Server.Models.Points;
 using Themis.Geometry.Server.Models.Points.Interfaces;
 using Themis.Geometry.Server.Services.Interfaces;
@@ -14,7 +15,7 @@ namespace Themis.Geometry.Server.Services
 {
     public class PointProviderService : IPointProviderService
     {
-        public static readonly object IndexLock = new object();
+        public static readonly object IndexLock = new();
 
         private readonly PointProviderServiceConfig config;
 
@@ -45,20 +46,23 @@ namespace Themis.Geometry.Server.Services
 
         public IKdTree<double, IPoint> LoadExistingData()
         {
-            if (config.POINT_DATA_FILE != null && fss.FileExists(config.POINT_DATA_FILE))
-            {
-                return LoadFromFile(config.POINT_DATA_FILE);
-            }
+            var pcoll = LoadFromExistingFiles();
+
+            foreach (var point in pcoll.Points) index.Add(point.Position, point);
+
             return index;
         }
 
-        IKdTree<double, IPoint> LoadFromFile(string pointFile)
+        IPointCollection LoadFromExistingFiles()
         {
-            //foreach (var point in fss.LoadFromFile(pointFile)) index.Add(point.Position, point);
+            var builder = new PointCollectionBuilder();
 
-            //return index;
+            if (config.POINT_DATA_FILE != null && fss.FileExists(config.POINT_DATA_FILE))
+            {
+                builder.AddPointsFromJson(config.POINT_DATA_FILE);
+            }
 
-            throw new NotImplementedException();
+            return builder.Build();
         }
 
         public IEnumerable<IPoint> GetAllWithin(IPoint point, double searchDistance)

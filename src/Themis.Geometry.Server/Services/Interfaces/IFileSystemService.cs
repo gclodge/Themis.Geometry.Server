@@ -23,6 +23,12 @@ namespace Themis.Geometry.Server.Services.Interfaces
         /// <param name="path">Directory path to analyze</param>
         /// <returns>The name of the given directory path</returns>
         string GetDirectoryName(string path);
+        /// <summary>
+        /// Read all contents of a given filepath into memory as a single string
+        /// </summary>
+        /// <param name="path">File path to be parsed</param>
+        /// <returns>Single string of all available file contents</returns>
+        string ReadFileContents(string path);
 
         /// <summary>
         /// Find and return files at the given path based on an optional search pattern

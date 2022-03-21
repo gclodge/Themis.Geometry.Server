@@ -23,7 +23,7 @@ namespace Themis.Geometry.Server.Models.Points
 
         public IPointCollection Add(IEnumerable<IPoint> points)
         {
-            foreach (var point in points) _ = Points.Append(point);
+            _ = Points.Concat(points);
             return this;
         }
 

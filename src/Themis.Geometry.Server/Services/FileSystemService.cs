@@ -18,9 +18,16 @@ namespace Themis.Geometry.Server.Services
 
         public string GetDirectoryName(string path)
         {
-            if (DirectoryExists(path)) return new DirectoryInfo(path).Name;
+            if (!DirectoryExists(path)) return path.Split(Delim).Last();
 
-            return path.Split(Delim).Last();
+            return new DirectoryInfo(path).Name;
+        }
+
+        public string ReadFileContents(string path)
+        {
+            if (FileExists(path)) throw new FileNotFoundException(path);
+
+            return File.ReadAllText(path);
         }
 
         public IEnumerable<string> GetFiles(string path, string? searchPattern = null, bool allDirectories = false)
