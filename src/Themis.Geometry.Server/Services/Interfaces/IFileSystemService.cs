@@ -32,12 +32,5 @@ namespace Themis.Geometry.Server.Services.Interfaces
         /// <param name="allDirectories">Flag to indicate if we should search all sub-directories as well</param>
         /// <returns></returns>
         IEnumerable<string> GetFiles(string path, string? searchPattern = null, bool allDirectories = false);
-
-        /// <summary>
-        /// Loads all existing IPoint objects from a given file path
-        /// </summary>
-        /// <param name="path">File to be parsed</param>
-        /// <returns>ALl available IPoint object records</returns>
-        IEnumerable<IPoint> LoadFromFile(string path);
     }
 }

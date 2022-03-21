@@ -45,16 +45,20 @@ namespace Themis.Geometry.Server.Services
 
         public IKdTree<double, IPoint> LoadExistingData()
         {
-            if (config.POINT_DATA_FILE == null) return index;
-
-            return fss.FileExists(config.POINT_DATA_FILE) ? LoadFromFile(config.POINT_DATA_FILE) : index;
+            if (config.POINT_DATA_FILE != null && fss.FileExists(config.POINT_DATA_FILE))
+            {
+                return LoadFromFile(config.POINT_DATA_FILE);
+            }
+            return index;
         }
 
         IKdTree<double, IPoint> LoadFromFile(string pointFile)
         {
-            foreach (var point in fss.LoadFromFile(pointFile)) index.Add(point.Position, point);
+            //foreach (var point in fss.LoadFromFile(pointFile)) index.Add(point.Position, point);
 
-            return index;
+            //return index;
+
+            throw new NotImplementedException();
         }
 
         public IEnumerable<IPoint> GetAllWithin(IPoint point, double searchDistance)

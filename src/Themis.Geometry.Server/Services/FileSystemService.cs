@@ -1,5 +1,4 @@
-﻿using Themis.Geometry.Server.Models.Points.Interfaces;
-using Themis.Geometry.Server.Services.Interfaces;
+﻿using Themis.Geometry.Server.Services.Interfaces;
 
 namespace Themis.Geometry.Server.Services
 {
@@ -29,14 +28,6 @@ namespace Themis.Geometry.Server.Services
             if (!DirectoryExists(path)) throw new DirectoryNotFoundException($"Unable to locate DIR: {path}");
 
             return Directory.GetFiles(path, searchPattern ?? "*", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-        }
-
-        public IEnumerable<IPoint> LoadFromFile(string path)
-        {
-            //< Hit the PointFileParserFactory - returns an IPointFileParser
-            //< Use that to return them points, add CSV/JSON to start
-
-            throw new NotImplementedException();
         }
     }
 }

@@ -1,8 +1,8 @@
-using Themis.Geometry.Server;
-using Themis.Geometry.Server.Services;
-using Themis.Geometry.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-using MediatR;
+using Themis.Geometry.Server;
+using Themis.Geometry.Server.Registrations;
+
 using Serilog;
 
 Log.Logger = Logging.GetBootstrap();
@@ -18,13 +18,8 @@ try
            .ReadFrom.Configuration(ctx.Configuration));
 
     //< Add services to the DI container
-    builder.Services.AddMediatR(System.Reflection.Assembly.GetExecutingAssembly());
-    //< Add & Configure Singletons
-    builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
-    builder.Services.AddOptions<PointProviderServiceConfig>()
-                    .Bind(builder.Configuration.GetSection(PointProviderServiceConfig.Name))
-                    .ValidateDataAnnotations();
-    builder.Services.AddSingleton<IPointProviderService, PointProviderService>();
+    ServiceRegistration.Register(builder.Services, builder.Configuration);
+    HealthCheckRegistration.Register(builder.Services);
 
     builder.Services.AddSwaggerGen();
     builder.Services.AddControllers();
@@ -34,12 +29,19 @@ try
     builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddEnvironmentVariables(Constants.ENV_VAR_PREFIX);
 
-    //< TODO :: Actually implement PointProviderService..
-    //< TODO :: (moar) tests, you animal
-
     var app = builder.Build();
 
     app.UseSerilogRequestLogging();
+
+    //< Map health check endpoints based on readiness as determined by StartupHealthCheck
+    app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
+    {
+        Predicate = healthCheck => healthCheck.Tags.Contains("ready")
+    });
+    app.MapHealthChecks("/healthz/live", new HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
