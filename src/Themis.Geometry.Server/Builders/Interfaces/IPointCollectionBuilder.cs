@@ -1,4 +1,5 @@
-﻿using Themis.Geometry.Server.Models.Points.Interfaces;
+﻿using Themis.Geometry.Server.Models.Points;
+using Themis.Geometry.Server.Models.Points.Interfaces;
 
 namespace Themis.Geometry.Server.Builders.Interfaces
 {
@@ -9,7 +10,7 @@ namespace Themis.Geometry.Server.Builders.Interfaces
         /// </summary>
         /// <param name="point">IPoint to be added</param>
         /// <returns>Updated IPointCollectionBuilder instance</returns>
-        IPointCollectionBuilder AddPoint(IPoint point);
+        IPointCollectionBuilder AddPoint(Point point);
         /// <summary>
         /// Add all available IPoint data from the input IPointCollection object
         /// </summary>
@@ -21,7 +22,7 @@ namespace Themis.Geometry.Server.Builders.Interfaces
         /// </summary>
         /// <param name="pcoll">IEnumerable&lt;IPoint&gt; object to pull IPoints from</param>
         /// <returns>Updated IPointCollectionBuilder instance</returns>
-        IPointCollectionBuilder AddPoints(IEnumerable<IPoint> points);
+        IPointCollectionBuilder AddPoints(IEnumerable<Point> points);
 
         /// <summary>
         /// Parse incoming PointCollection JSON blob and add all IPoint records contained

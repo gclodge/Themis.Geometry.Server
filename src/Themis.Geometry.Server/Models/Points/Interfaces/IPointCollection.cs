@@ -3,31 +3,36 @@
     public interface IPointCollection
     {
         /// <summary>
-        /// Underlying collection of IPoint objects
+        /// Count of all Point items contained within the IPointCollection
         /// </summary>
-        IEnumerable<IPoint> Points { get; }
+        int Count { get; }
 
         /// <summary>
-        /// Add a single IPoint object to the IPointCollection
+        /// Underlying collection of Point objects
         /// </summary>
-        /// <param name="point">IPoint object to be added</param>
-        /// <returns>Updated IPointCollection object</returns>
-        IPointCollection Add(IPoint point);
+        IEnumerable<Point> Points { get; }
+
         /// <summary>
-        /// Add all IPoints from an existing IPointCollection to this IPointCollection
+        /// Add a single IPoint object to the PointCollection
+        /// </summary>
+        /// <param name="point">Point object to be added</param>
+        /// <returns>Updated PointCollection object</returns>
+        IPointCollection Add(Point point);
+        /// <summary>
+        /// Add all Points from an existing IPointCollection to this IPointCollection
         /// </summary>
         /// <param name="other">IPointCollection to be pulled from</param>
         /// <returns>Updated IPointCollection object</returns>
         IPointCollection Add(IPointCollection other);
         /// <summary>
-        /// Add all IPoint object from an existing IEnumerable&lt;IPoint&gt; to this IPointCollection
+        /// Add all Point object from an existing IEnumerable&lt;Point&gt; to this IPointCollection
         /// </summary>
         /// <param name="points">IEnumerable&lt;IPoint&gt; to be pulled from</param>
         /// <returns>Updated IPointCollection object</returns>
-        IPointCollection Add(IEnumerable<IPoint> points);
+        IPointCollection Add(IEnumerable<Point> points);
 
         /// <summary>
-        /// Parse incoming PointCollection JSON blob and then add all IPoints to this IPointCollection
+        /// Parse incoming PointCollection JSON blob and then add all Points to this IPointCollection
         /// </summary>
         /// <param name="json">PointCollection JSON blob to parse</param>
         /// <returns>Updated IPointCollection object</returns>

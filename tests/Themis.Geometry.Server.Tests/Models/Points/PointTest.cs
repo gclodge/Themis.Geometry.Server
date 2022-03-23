@@ -29,6 +29,12 @@ namespace Themis.Geometry.Server.Tests.Models.Points
 
             Assert.True(Expected.Equals(Actual));
             Assert.True(Expected.Equals(Actual as object));
+
+            foreach (var key in Expected.Attributes.Keys)
+            {
+                Assert.True(Actual.Attributes.ContainsKey(key));
+                Assert.Equal(Expected.Attributes[key], Actual.Attributes[key]);
+            }
         }
 
         [Fact]
@@ -60,16 +66,10 @@ namespace Themis.Geometry.Server.Tests.Models.Points
         {
             var Source = faker.Generate();
 
-            var Expected1D = Point.FromPoint(Source)
-                                  .WithPosition(Source.Position.Take(1));
             var Expected2D = Point.FromPoint(Source)
                                   .WithPosition(Source.Position.Take(2));
             var Expected3D = Point.FromPoint(Source)
                                   .WithPosition(Source.Position.Take(3));
-
-            Assert.Equal(Source.X, Expected1D.X);
-            Assert.True(double.IsNaN(Expected1D.Y));
-            Assert.True(double.IsNaN(Expected1D.Z));
 
             Assert.Equal(Source.X, Expected2D.X);
             Assert.Equal(Source.Y, Expected2D.Y);

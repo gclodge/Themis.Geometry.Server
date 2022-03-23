@@ -7,12 +7,14 @@ namespace Themis.Geometry.Server.Models.Points
 {
     public class PointCollection : IPointCollection
     {
-        public IEnumerable<IPoint> Points { get; set; } = new List<IPoint>();
+        public IEnumerable<Point> Points { get; set; } = new List<Point>();
+
+        public int Count => Points.Count();
 
         #region IPointCollection members
-        public IPointCollection Add(IPoint point)
+        public IPointCollection Add(Point point)
         {
-            _ = Points.Append(point);
+            Points = Points.Append(point);
             return this;
         }
 
@@ -21,9 +23,9 @@ namespace Themis.Geometry.Server.Models.Points
             return Add(other.Points);
         }
 
-        public IPointCollection Add(IEnumerable<IPoint> points)
+        public IPointCollection Add(IEnumerable<Point> points)
         {
-            _ = Points.Concat(points);
+            Points = Points.Concat(points);
             return this;
         }
 

@@ -9,7 +9,7 @@ namespace Themis.Geometry.Server.Builders
         private PointCollection points = new();
 
         #region IPointCollectionBuilder members
-        public IPointCollectionBuilder AddPoint(IPoint point)
+        public IPointCollectionBuilder AddPoint(Point point)
         {
             this.points.Add(point);
             return this;
@@ -20,7 +20,7 @@ namespace Themis.Geometry.Server.Builders
             return AddPoints(pcoll.Points);
         }
 
-        public IPointCollectionBuilder AddPoints(IEnumerable<IPoint> points)
+        public IPointCollectionBuilder AddPoints(IEnumerable<Point> points)
         {
             this.points.Add(points);
             return this;
