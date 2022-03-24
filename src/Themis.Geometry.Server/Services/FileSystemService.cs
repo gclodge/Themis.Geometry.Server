@@ -6,6 +6,11 @@ namespace Themis.Geometry.Server.Services
     {
         public const char Delim = '/';
 
+        public DirectoryInfo CreateDirectory(string path)
+        {
+            return Directory.CreateDirectory(path);
+        }
+
         public bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
@@ -18,23 +23,21 @@ namespace Themis.Geometry.Server.Services
 
         public string GetDirectoryName(string path)
         {
-            if (!DirectoryExists(path)) return path.Split(Delim).Last();
-
             return new DirectoryInfo(path).Name;
         }
 
         public string ReadFileContents(string path)
         {
-            if (FileExists(path)) throw new FileNotFoundException(path);
+            if (!FileExists(path)) throw new FileNotFoundException(path);
 
             return File.ReadAllText(path);
         }
 
-        public IEnumerable<string> GetFiles(string path, string? searchPattern = null, bool allDirectories = false)
+        public IEnumerable<string> GetFiles(string path)
         {
             if (!DirectoryExists(path)) throw new DirectoryNotFoundException($"Unable to locate DIR: {path}");
 
-            return Directory.GetFiles(path, searchPattern ?? "*", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            return Directory.GetFiles(path);
         }
     }
 }

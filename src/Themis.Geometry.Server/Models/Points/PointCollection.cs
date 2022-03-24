@@ -9,9 +9,9 @@ namespace Themis.Geometry.Server.Models.Points
     {
         public IEnumerable<Point> Points { get; set; } = new List<Point>();
 
+        [JsonIgnore]
         public int Count => Points.Count();
 
-        #region IPointCollection members
         public IPointCollection Add(Point point)
         {
             Points = Points.Append(point);
@@ -45,6 +45,10 @@ namespace Themis.Geometry.Server.Models.Points
 
             return this;
         }
-        #endregion
+
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

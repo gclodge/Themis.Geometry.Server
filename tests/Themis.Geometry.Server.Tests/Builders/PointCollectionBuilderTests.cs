@@ -85,5 +85,21 @@ namespace Themis.Geometry.Server.Tests.Builders
                 Assert.Equal(expected.Points.ElementAt(i), actual.Points.ElementAt(i));
             }
         }
+
+        [Fact]
+        public void PointCollectionBuilderResetTest()
+        {
+            int count = 5;
+            var points = faker.Generate(count);
+
+            var builder = new PointCollectionBuilder().AddPoints(points);
+
+            builder.Reset();
+
+            var actual = builder.Build();
+
+            Assert.Empty(actual.Points);
+            Assert.Equal(0, actual.Count);
+        }
     }
 }

@@ -37,5 +37,11 @@
         /// <param name="json">PointCollection JSON blob to parse</param>
         /// <returns>Updated IPointCollection object</returns>
         IPointCollection AddFromJson(string json);
+
+        /// <summary>
+        /// Serialize the current IPointCollection object into a JSON string
+        /// </summary>
+        /// <returns>JSON string representation of IPointCollection object</returns>
+        string ToJson();
     }
 }

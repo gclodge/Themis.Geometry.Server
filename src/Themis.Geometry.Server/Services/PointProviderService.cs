@@ -19,7 +19,7 @@ namespace Themis.Geometry.Server.Services
 
         private readonly PointProviderServiceConfig config;
 
-        private IKdTree<double, IPoint> index;
+        private readonly IKdTree<double, IPoint> index;
         private readonly IFileSystemService fss;
 
         public PointProviderService(IFileSystemService fileSystemService, IOptions<PointProviderServiceConfig> cfg)

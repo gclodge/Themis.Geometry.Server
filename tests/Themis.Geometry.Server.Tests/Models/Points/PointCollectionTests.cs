@@ -5,7 +5,6 @@ using Themis.Geometry.Server.Models.Points;
 using Bogus;
 using Xunit;
 using Assert = Xunit.Assert;
-using Newtonsoft.Json;
 
 namespace Themis.Geometry.Server.Tests.Models.Points
 {
@@ -72,12 +71,11 @@ namespace Themis.Geometry.Server.Tests.Models.Points
             var points = faker.Generate(count);
 
             var pcollA = new PointCollection().Add(points);
-            var json = JsonConvert.SerializeObject(pcollA);
+            var json = pcollA.ToJson();
 
-            var pcollB = JsonConvert.DeserializeObject<PointCollection>(json);
-            pcollB ??= new PointCollection(); //< Should never happen - but RIP null reference warnings, nerds
+            var pcollB = new PointCollection().AddFromJson(json);
 
-            Assert.NotNull(pcollB);
+            Assert.NotEmpty(pcollB.Points);
             Assert.Equal(count, pcollB.Count);
             foreach (int i in Enumerable.Range(0, count))
             {
