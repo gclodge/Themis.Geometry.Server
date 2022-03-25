@@ -9,8 +9,11 @@ namespace Themis.Geometry.Server.Models.Points
         public const int MinimumDimensionality = 2;
         public const int MaximumDimensionality = 1337; //< comedy.init();
 
+        [JsonIgnore]
         public double X => Position.ElementAt(0);
+        [JsonIgnore]
         public double Y => Position.ElementAt(1);
+        [JsonIgnore]
         public double Z => Position.Count() > 2 ? Position.ElementAt(2) : double.NaN;
 
         [JsonProperty("position")]
@@ -26,6 +29,14 @@ namespace Themis.Geometry.Server.Models.Points
             {
                 Position = other.Position,
                 Attributes = other.Attributes
+            };
+        }
+
+        public static Point Create(IEnumerable<double> pos)
+        {
+            return new Point()
+            {
+                Position = pos.ToList()
             };
         }
 

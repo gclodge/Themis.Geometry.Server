@@ -19,13 +19,16 @@ namespace Themis.Geometry.Server.Services
 
         private readonly PointProviderServiceConfig config;
 
-        private readonly IKdTree<double, IPoint> index;
+        private readonly IKdTree<double, Point> index;
         private readonly IFileSystemService fss;
+
+        public int Count => index.Count;
+        public int Dimensionality => index.Dimensions;
 
         public PointProviderService(IFileSystemService fileSystemService, IOptions<PointProviderServiceConfig> cfg)
         {
             config = ParseConfiguration(cfg);
-            index = new KdTree<double, IPoint>(config.DIMENSIONS, new DoubleMath());
+            index = new KdTree<double, Point>(config.DIMENSIONS, new DoubleMath());
             fss = fileSystemService;
         }
 
@@ -44,13 +47,11 @@ namespace Themis.Geometry.Server.Services
             }
         }
 
-        public IKdTree<double, IPoint> LoadExistingData()
+        public IPointProviderService LoadExistingData()
         {
             var pcoll = LoadFromExistingFiles();
 
-            foreach (var point in pcoll.Points) index.Add(point.Position, point);
-
-            return index;
+            return Add(pcoll.Points);
         }
 
         IPointCollection LoadFromExistingFiles()
@@ -59,13 +60,37 @@ namespace Themis.Geometry.Server.Services
 
             if (config.POINT_DATA_FILE != null && fss.FileExists(config.POINT_DATA_FILE))
             {
-                builder.AddPointsFromJson(config.POINT_DATA_FILE);
+                builder.AddPointsFromJson(fss.ReadFileContents(config.POINT_DATA_FILE));
             }
 
             return builder.Build();
         }
 
-        public IEnumerable<IPoint> GetAllWithin(IPoint point, double searchDistance)
+        public IPointProviderService Add(Point point)
+        {
+            index.Add(point.Position, point);
+            return this;
+        }
+
+        public IPointProviderService Add(IEnumerable<Point> points)
+        {
+            foreach (var point in points) index.Add(point.Position, point);
+            return this;
+        }
+
+        public IPointProviderService Remove(Point point)
+        {
+            index.Remove(point.Position);
+            return this;
+        }
+
+        public IPointProviderService Remove(IEnumerable<Point> points)
+        {
+            foreach (var point in points) index.Remove(point.Position);
+            return this;
+        }
+
+        public IEnumerable<Point> GetAllWithin(Point point, double searchDistance)
         {
             foreach (var node in index.RadialSearch(point.Position, searchDistance))
             {
@@ -73,12 +98,12 @@ namespace Themis.Geometry.Server.Services
             }
         }
 
-        public IPoint GetNearest(IPoint poi)
+        public Point GetNearest(Point poi)
         {
             return GetNearest(poi, 1).SingleOrDefault() ?? new Point();
         }
 
-        public IEnumerable<IPoint> GetNearest(IPoint poi, int count)
+        public IEnumerable<Point> GetNearest(Point poi, int count)
         {
             foreach (var node in index.GetNearestNeighbours(poi.Position, count))
             {

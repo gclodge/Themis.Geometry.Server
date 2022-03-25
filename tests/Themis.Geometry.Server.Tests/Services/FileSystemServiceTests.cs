@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 
 using Bogus;
 using Xunit;
@@ -12,8 +11,8 @@ namespace Themis.Geometry.Server.Tests.Services
 {
     public class FileSystemServiceTests
     {
-        Faker faker;
-        FileSystemService ffs;
+        readonly Faker faker;
+        readonly FileSystemService ffs;
 
         public FileSystemServiceTests()
         {
@@ -57,7 +56,7 @@ namespace Themis.Geometry.Server.Tests.Services
         [Fact]
         public void GetDirectoryNameTest()
         {
-            var expected = faker.Random.Word();
+            var expected = faker.Lorem.Word();
             var path = Path.Combine(Path.GetTempPath(), expected);
             
             var actual = ffs.GetDirectoryName(path);

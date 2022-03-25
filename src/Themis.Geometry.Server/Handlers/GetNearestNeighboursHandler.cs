@@ -2,13 +2,12 @@
 using Themis.Geometry.Server.Services.Interfaces;
 
 using Themis.Geometry.Server.Models.Points;
-using Themis.Geometry.Server.Models.Points.Interfaces;
 
 using MediatR;
 
 namespace Themis.Geometry.Server.Handlers
 {
-    public class GetNearestNeighboursHandler : IRequestHandler<GetNearestNeighboursCommand, IEnumerable<IPoint>>
+    public class GetNearestNeighboursHandler : IRequestHandler<GetNearestNeighboursCommand, IEnumerable<Point>>
     {
         readonly IPointProviderService pointProviderService;
 
@@ -17,11 +16,11 @@ namespace Themis.Geometry.Server.Handlers
             this.pointProviderService = pointService;
         }
 
-        public Task<IEnumerable<IPoint>> Handle(GetNearestNeighboursCommand request, CancellationToken cancellationToken)
+        public Task<IEnumerable<Point>> Handle(GetNearestNeighboursCommand request, CancellationToken cancellationToken)
         {
             lock (request.IndexLock)
             {
-                if (request.Count <= 0) return Task.FromResult(new List<IPoint>() as IEnumerable<IPoint>);
+                if (request.Count <= 0) return Task.FromResult(new List<Point>() as IEnumerable<Point>);
 
                 var nearest = pointProviderService.GetNearest(request.POI, request.Count);
                 return Task.FromResult(nearest);
