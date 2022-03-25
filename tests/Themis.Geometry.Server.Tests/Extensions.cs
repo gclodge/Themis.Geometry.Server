@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using Bogus;
@@ -7,6 +8,11 @@ namespace Themis.Geometry.Server.Tests
 {
     internal static class Extensions
     {
+        internal static IEnumerable<string> GenerateRandomTextFiles(this Faker f, string dir, int count)
+        {
+            return f.GenerateUniqueWords(count).Select(w => Path.Combine(dir, $"{w}.txt")).ToArray();
+        }
+
         internal static IEnumerable<double> GenerateRandomVector(this Faker f, int count)
         {
             return Enumerable.Range(0, count).Select(i => f.Random.Double()).ToArray();

@@ -1,21 +1,21 @@
-﻿using Themis.Geometry.Server.Models.Points.Interfaces;
+﻿using Themis.Geometry.Server.Models.Points;
 
 using MediatR;
 
 namespace Themis.Geometry.Server.Commands
 {
-    public class GetNearestNeighbourCommand : IRequest<IPoint>
+    public class GetNearestNeighbourCommand : IRequest<Point>
     {
         /// <summary>
         /// The query Point-of-Interest (POI)
         /// </summary>
-        public readonly IPoint POI;
+        public readonly Point POI;
         /// <summary>
         /// The lock mutex for the PointProviderService's internal index
         /// </summary>
         public readonly object IndexLock;
 
-        public GetNearestNeighbourCommand(IPoint poi, ref object indexLock)
+        public GetNearestNeighbourCommand(Point poi, ref object indexLock)
         {
             this.POI = poi;
             this.IndexLock = indexLock;
