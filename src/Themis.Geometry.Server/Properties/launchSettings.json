@@ -14,7 +14,11 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "THEMIS_POINTS__DIMENSIONS": "2",
+        "THEMIS_PROJECTION__EPSG_CODE": "4326",
+        "THEMIS_PROJECTION__IS_GEOGRAPHIC": "true",
+        "THEMIS_PROJECTION__PROJECTION_WKT": "+proj=longlat +datum=WGS84 +no_defs "
       },
       "applicationUrl": "https://localhost:7095;http://localhost:5095",
       "dotnetRunMessages": true
