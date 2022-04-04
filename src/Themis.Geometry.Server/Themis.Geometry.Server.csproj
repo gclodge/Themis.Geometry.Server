@@ -19,7 +19,7 @@
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-    <PackageReference Include="Themis.Geometry" Version="2022.3.20" />
+    <PackageReference Include="Themis.Geometry" Version="2022.4.1" />
   </ItemGroup>
 
 </Project>

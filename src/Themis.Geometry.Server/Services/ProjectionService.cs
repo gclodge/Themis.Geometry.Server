@@ -17,7 +17,7 @@ namespace Themis.Geometry.Server.Services
 
         public int? EpsgCode => config.EPSG_CODE;
 
-        public string? WellKnownText => config.PROJECTION_WKT;
+        public string? WellKnownText => config.WELL_KNOWN_TEXT;
 
         private readonly ProjectionServiceConfig config;
 

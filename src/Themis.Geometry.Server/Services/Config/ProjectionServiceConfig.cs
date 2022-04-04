@@ -16,8 +16,8 @@
 
         /// <summary>
         /// If available, the well-known-text (WKT) representation of underlying coordinate system
-        /// NOTE: May be any WKT format (PROJ.4, ESRI WKT, OGC WKT, etc)
+        /// <para>NOTE: May be any WKT format (PROJ.4, ESRI WKT, OGC WKT, etc)</para>
         /// </summary>
-        public string? PROJECTION_WKT { get; set; }
+        public string? WELL_KNOWN_TEXT { get; set; }
     }
 }
