@@ -12,18 +12,24 @@ namespace Themis.Geometry.Server.Services
 {
     public class ProjectionService : IProjectionService
     {
-        public bool IsGeographic => config.IS_GEOGRAPHIC;
+        public static readonly object ProjectionLock = new();
+
+        public bool IsGeographic { get; private set; }
         public bool IsProjected => !IsGeographic;
 
-        public int? EpsgCode => config.EPSG_CODE;
+        public int? EpsgCode { get; private set; }
 
-        public string? WellKnownText => config.WELL_KNOWN_TEXT;
+        public string? WellKnownText { get; private set; }
 
         private readonly ProjectionServiceConfig config;
 
         public ProjectionService(IOptions<ProjectionServiceConfig> cfg)
         {
             config = ParseConfiguration(cfg);
+
+            EpsgCode = config.EPSG_CODE;
+            IsGeographic = config.IS_GEOGRAPHIC;
+            WellKnownText = config.WELL_KNOWN_TEXT;
         }
 
         /// <summary>
@@ -44,6 +50,16 @@ namespace Themis.Geometry.Server.Services
                 foreach (var failure in ex.Failures) Log.Error(failure);
                 throw;
             }
+        }
+
+        public void SetEpsgCode(int epsgCode)
+        {
+            EpsgCode = epsgCode;
+        }
+
+        public void SetWellKnownText(string wkt)
+        {
+            WellKnownText = wkt;
         }
 
         public ITypeMath<double> GetTypeMath()

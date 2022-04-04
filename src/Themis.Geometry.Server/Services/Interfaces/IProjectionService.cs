@@ -29,5 +29,16 @@ namespace Themis.Geometry.Server.Services.Interfaces
         /// </summary>
         /// <returns>ITypeMath&lt;double&gt; corresponding to internal coordinate system</returns>
         public ITypeMath<double> GetTypeMath();
+
+        /// <summary>
+        /// Sets the EPSG code describing the Server's coordinate system
+        /// </summary>
+        /// <param name="epsgCode"></param>
+        public void SetEpsgCode(int epsgCode);
+        /// <summary>
+        /// Sets the well-known-text (WKT) describing the Server's coordinate system
+        /// </summary>
+        /// <param name="wkt"></param>
+        public void SetWellKnownText(string wkt);
     }
 }
