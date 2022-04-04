@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 
 using Microsoft.Extensions.Options;
 
 using Themis.Geometry.Server.Services;
+using Themis.Geometry.Server.Services.Config;
 using Themis.Geometry.Server.Services.Interfaces;
 using Themis.Geometry.Server.Models.Points;
 
@@ -28,7 +27,8 @@ namespace Themis.Geometry.Server.Tests.Services
 
         private readonly Faker faker;
         private readonly Faker<Point> pointFaker;
-        private readonly IFileSystemService fss;
+        private readonly IFileSystemService fileSystemService;
+        private readonly IProjectionService projectionService;
 
         public PointProviderServiceTests()
         {
@@ -37,7 +37,21 @@ namespace Themis.Geometry.Server.Tests.Services
                 .RuleFor(p => p.Position, f => f.GenerateRandomVector(PointFileDimensions))
                 .RuleFor(p => p.Attributes, f => f.GenerateRandomDictionary(PointFileAttributes));
 
-            this.fss = new FileSystemService();
+            this.fileSystemService = new FileSystemService();
+            this.projectionService = GetProjectionService();
+        }
+
+        static IProjectionService GetProjectionService()
+        {
+            var cfg = new ProjectionServiceConfig
+            {
+                IS_GEOGRAPHIC = false //< Baked in test dataset is in Euclidean space
+            };
+
+            var configMock = Substitute.For<IOptions<ProjectionServiceConfig>>();
+            configMock.Value.Returns(cfg);
+
+            return new ProjectionService(configMock);
         }
 
         static IOptions<PointProviderServiceConfig> GetMockOptions(int dimensions = 2, string? file = null)
@@ -60,7 +74,7 @@ namespace Themis.Geometry.Server.Tests.Services
             int expectedDims = faker.Random.Int(min: 2, max: 10);
 
             var opt = GetMockOptions(expectedDims);
-            var pps = new PointProviderService(fss, opt);
+            var pps = new PointProviderService(fileSystemService, projectionService, opt);
 
             Assert.Equal(expectedCount, pps.Count);
             Assert.Equal(expectedDims, pps.Dimensionality);
@@ -70,7 +84,7 @@ namespace Themis.Geometry.Server.Tests.Services
         public void CreateWithDataFromExistingFileTest()
         {
             var opt = GetMockOptions(PointFileDimensions, PointFile);
-            var pps = new PointProviderService(fss, opt).LoadExistingData();
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).LoadExistingData();
 
             Assert.Equal(PointFileCount, pps.Count);
             Assert.Equal(PointFileDimensions, pps.Dimensionality);
@@ -81,7 +95,7 @@ namespace Themis.Geometry.Server.Tests.Services
         {
             var file = Path.Combine(Path.GetTempPath(), faker.Lorem.Word() + "-unique");
             var opt = GetMockOptions(PointFileDimensions, file);
-            var pps = new PointProviderService(fss, opt).LoadExistingData();
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).LoadExistingData();
 
             Assert.Equal(0, pps.Count);
             Assert.Equal(PointFileDimensions, pps.Dimensionality);
@@ -93,7 +107,7 @@ namespace Themis.Geometry.Server.Tests.Services
             var opt = GetMockOptions(PointFileDimensions);
             var point = pointFaker.Generate();
 
-            var pps = new PointProviderService(fss, opt).Add(point);
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).Add(point);
 
             Assert.Equal(1, pps.Count);
         }
@@ -106,7 +120,7 @@ namespace Themis.Geometry.Server.Tests.Services
             var opt = GetMockOptions(PointFileDimensions);
             var points = pointFaker.Generate(expectedCount);
 
-            var pps = new PointProviderService(fss, opt).Add(points);
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).Add(points);
 
             Assert.Equal(expectedCount, pps.Count);
         }
@@ -117,7 +131,7 @@ namespace Themis.Geometry.Server.Tests.Services
             var opt = GetMockOptions(PointFileDimensions);
             var point = pointFaker.Generate();
 
-            var pps = new PointProviderService(fss, opt).Add(point).Remove(point);
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).Add(point).Remove(point);
 
             Assert.Equal(0, pps.Count);
         }
@@ -130,7 +144,7 @@ namespace Themis.Geometry.Server.Tests.Services
             var opt = GetMockOptions(PointFileDimensions);
             var points = pointFaker.Generate(count);
 
-            var pps = new PointProviderService(fss, opt).Add(points).Remove(points);
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).Add(points).Remove(points);
 
             Assert.Equal(0, pps.Count);
         }
@@ -139,9 +153,9 @@ namespace Themis.Geometry.Server.Tests.Services
         public void GetNearestPointTest()
         {
             var opt = GetMockOptions(PointFileDimensions, PointFile);
-            var pps = new PointProviderService(fss, opt).LoadExistingData();
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).LoadExistingData();
 
-            var pcoll = new PointCollection().AddFromJson(fss.ReadFileContents(PointFile));
+            var pcoll = new PointCollection().AddFromJson(fileSystemService.ReadFileContents(PointFile));
 
             var poi = faker.PickRandom(pcoll.Points);
 
@@ -156,9 +170,9 @@ namespace Themis.Geometry.Server.Tests.Services
             int expected = 3;
 
             var opt = GetMockOptions(PointFileDimensions, PointFile);
-            var pps = new PointProviderService(fss, opt).LoadExistingData();
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).LoadExistingData();
 
-            var pcoll = new PointCollection().AddFromJson(fss.ReadFileContents(PointFile));
+            var pcoll = new PointCollection().AddFromJson(fileSystemService.ReadFileContents(PointFile));
 
             var poi = faker.PickRandom(pcoll.Points);
 
@@ -175,7 +189,7 @@ namespace Themis.Geometry.Server.Tests.Services
             double searchDist = 1.0;
 
             var opt = GetMockOptions(PointFileDimensions, PointFile);
-            var pps = new PointProviderService(fss, opt).LoadExistingData();
+            var pps = new PointProviderService(fileSystemService, projectionService, opt).LoadExistingData();
 
             var orig = Point.Create(new[] { 0.0, 0.0 });
             var poi = pps.GetNearest(orig);

@@ -1,10 +1,10 @@
 ﻿using Themis.Geometry.Index.KdTree;
-using Themis.Geometry.Index.KdTree.TypeMath;
 using Themis.Geometry.Index.KdTree.Interfaces;
 
 using Themis.Geometry.Server.Builders;
 using Themis.Geometry.Server.Models.Points;
 using Themis.Geometry.Server.Models.Points.Interfaces;
+using Themis.Geometry.Server.Services.Config;
 using Themis.Geometry.Server.Services.Interfaces;
 
 using Microsoft.Extensions.Options;
@@ -20,18 +20,27 @@ namespace Themis.Geometry.Server.Services
         private readonly PointProviderServiceConfig config;
 
         private readonly IKdTree<double, Point> index;
-        private readonly IFileSystemService fss;
+        private readonly IFileSystemService fileSystemService;
+        private readonly IProjectionService projectionService;
 
         public int Count => index.Count;
         public int Dimensionality => index.Dimensions;
 
-        public PointProviderService(IFileSystemService fileSystemService, IOptions<PointProviderServiceConfig> cfg)
+        public PointProviderService(IFileSystemService fss, IProjectionService projService, IOptions<PointProviderServiceConfig> cfg)
         {
             config = ParseConfiguration(cfg);
-            index = new KdTree<double, Point>(config.DIMENSIONS, new DoubleMath());
-            fss = fileSystemService;
+            
+            fileSystemService = fss;
+            projectionService = projService;
+
+            index = new KdTree<double, Point>(config.DIMENSIONS, projectionService.GetTypeMath());
         }
 
+        /// <summary>
+        /// Attempt to parse the PointProviderServiceConfig as parsed from environment variable configuration
+        /// </summary>
+        /// <param name="opt">IOptions&lt;PointProviderServiceConfig&gt; containing available configuration</param>
+        /// <returns>Fully composed PointProviderServiceConfig as configured</returns>
         static PointProviderServiceConfig ParseConfiguration(IOptions<PointProviderServiceConfig> opt)
         {
             PointProviderServiceConfig cfg;
@@ -54,13 +63,17 @@ namespace Themis.Geometry.Server.Services
             return Add(pcoll.Points);
         }
 
+        /// <summary>
+        /// Loads any existing point data from configured files or directories on local disk
+        /// </summary>
+        /// <returns>IPointCollection containing all existing, available point data</returns>
         IPointCollection LoadFromExistingFiles()
         {
             var builder = new PointCollectionBuilder();
 
-            if (config.POINT_DATA_FILE != null && fss.FileExists(config.POINT_DATA_FILE))
+            if (config.POINT_DATA_FILE != null && fileSystemService.FileExists(config.POINT_DATA_FILE))
             {
-                builder.AddPointsFromJson(fss.ReadFileContents(config.POINT_DATA_FILE));
+                builder.AddPointsFromJson(fileSystemService.ReadFileContents(config.POINT_DATA_FILE));
             }
 
             return builder.Build();
