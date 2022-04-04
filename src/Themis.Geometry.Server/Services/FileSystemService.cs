@@ -28,14 +28,14 @@ namespace Themis.Geometry.Server.Services
 
         public string ReadFileContents(string path)
         {
-            if (!FileExists(path)) throw new FileNotFoundException(path);
+            if (!FileExists(path)) throw new AppException($"Unable to locate FILE: {path}");
 
             return File.ReadAllText(path);
         }
 
         public IEnumerable<string> GetFiles(string path)
         {
-            if (!DirectoryExists(path)) throw new DirectoryNotFoundException($"Unable to locate DIR: {path}");
+            if (!DirectoryExists(path)) throw new AppException($"Unable to locate DIR: {path}");
 
             return Directory.GetFiles(path);
         }

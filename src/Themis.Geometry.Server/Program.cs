@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 using Themis.Geometry.Server;
+using Themis.Geometry.Server.Middleware;
 using Themis.Geometry.Server.Registrations;
 
 using Serilog;
@@ -34,11 +35,11 @@ try
     app.UseSerilogRequestLogging();
 
     //< Map health check endpoints based on readiness as determined by StartupHealthCheck
-    app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
+    app.MapHealthChecks("/readyz", new HealthCheckOptions
     {
         Predicate = healthCheck => healthCheck.Tags.Contains("ready")
     });
-    app.MapHealthChecks("/healthz/live", new HealthCheckOptions
+    app.MapHealthChecks("/livez", new HealthCheckOptions
     {
         Predicate = _ => false
     });
@@ -50,10 +51,10 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UseMiddleware<ErrorHandlingMiddleware>();
+
     app.UseHttpsRedirection();
-
     app.UseAuthorization();
-
     app.MapControllers();
 
     app.Run();

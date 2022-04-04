@@ -48,7 +48,7 @@ namespace Themis.Geometry.Server.Services
             catch (OptionsValidationException ex)
             {
                 foreach (var failure in ex.Failures) Log.Error(failure);
-                throw;
+                throw new AppException("Failed to parse ProjectionServiceConfig", ex);
             }
         }
 
