@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
 using Themis.Geometry.Server.Services;
+using Themis.Geometry.Server.Services.Config;
 using Themis.Geometry.Server.Services.Interfaces;
 
 using MediatR;
@@ -14,9 +15,12 @@ namespace Themis.Geometry.Server.Registrations
         {
             //< Add & Configure Singletons
             services.AddSingleton<IFileSystemService, FileSystemService>();
+            services.AddOptions<ProjectionServiceConfig>()
+                        .Bind(configuration.GetSection(ProjectionServiceConfig.Name));
+            services.AddSingleton<IProjectionService, ProjectionService>();
             services.AddOptions<PointProviderServiceConfig>()
-                            .Bind(configuration.GetSection(PointProviderServiceConfig.Name))
-                            .ValidateDataAnnotations();
+                        .Bind(configuration.GetSection(PointProviderServiceConfig.Name))
+                        .ValidateDataAnnotations();
             services.AddSingleton<IPointProviderService, PointProviderService>();
 
             //< Adding MediatR as the 'last' step
